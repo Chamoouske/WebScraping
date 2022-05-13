@@ -5,8 +5,8 @@
 # Descrição sobre o projeto
 <p>Este projeto é um web scraping de alguns e-commerces, como Mercado Livre, Amazon, Americanas, entre outros.</p>
 
-### Funcão do projeto
-<p>Este projeto tem como objetivo mapear esses e-commerces ao realizar a pesquisa de um determinado produto, informado pelo usuário. E gerar um arquivo excel contendo os valores encontrados, entre outras informações como média dos valores, e a quatidade de produtos encontrados.</p>
+### Função do projeto
+<p>Este projeto tem como objetivo mapear esses e-commerces ao realizar a pesquisa de um determinado produto, informado pelo usuário. E gerar um arquivo excel contendo os valores encontrados, entre outras informações como média dos valores, e a quantidade de produtos encontrados.</p>
 
 #### Pré-requisitos para rodar o projeto
 ##### Instalação das bibliotecas usadas
