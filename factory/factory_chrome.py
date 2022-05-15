@@ -1,7 +1,12 @@
 from selenium import webdriver
-from .factory_navegador_webdriver import Navegador
+
+from .factory_navegador import Navegador
 
 
 class Chrome(Navegador):
     def __init__(self):
-        self.navegador = webdriver.Chrome()
+        options = webdriver.ChromeOptions()
+        options.add_argument('--ignore-certificate-errors')
+        options.add_argument('--ignore-ssl-errors')
+        
+        self.navegador = webdriver.Chrome(chrome_options=options)
