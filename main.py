@@ -1,6 +1,10 @@
 from factory.factory_chrome import Chrome
 from factory.factory_firefox import Firefox
-import time
+from log.main import *
+
+
+def main():
+    create_logger('main.log')
 
 
 def definir_navegador(navegador_usado = 'CHROME'):
@@ -12,10 +16,8 @@ def definir_navegador(navegador_usado = 'CHROME'):
 
 
 if __name__ == '__main__':
+    main()
     navegador = definir_navegador('CHROME')
-    navegador.get('https://www.mercadolivre.com.br/')
-    navegador.pesquisar_produto('ssd', 'mercadolivre')
-    time.sleep(1)
-    navegador.pegar_valores_dos_resultados_da_pesquisa()
+    navegador.pesquisar_produto('redmi note 8')
     navegador.quit()
 
