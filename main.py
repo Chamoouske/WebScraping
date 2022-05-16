@@ -18,6 +18,5 @@ def definir_navegador(navegador_usado = 'CHROME'):
 if __name__ == '__main__':
     main()
     navegador = definir_navegador('CHROME')
-    navegador.pesquisar_produto('redmi note 8')
-    navegador.quit()
+    navegador.pesquisar_produto('redmi note 8 pro')
 
