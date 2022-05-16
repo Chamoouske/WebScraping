@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 
 from log.main import *
 from utils.vars_utils import *
+from utils.window import *
 
 
 class Navegador:
@@ -19,6 +20,7 @@ class Navegador:
     lista_valores_produtos = []
     lista_links_produtos = []
 
+    nome_tabela = ''
     tabela_produtos = None
 
     sites_usados = lista_sites
@@ -28,7 +30,9 @@ class Navegador:
         pass
 
     def __new__(cls, *args, **kwargs):
-        return super(Navegador, cls).__new__(cls, *args, **kwargs)
+        if not hasattr(cls, '_instance'):
+            cls._instance = super(Navegador, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
 
 
     def get(self, ir_para):
@@ -49,7 +53,8 @@ class Navegador:
             self.salvar_produto_pesquisado(produto)
             self.proximo_site(True)
                 
-        info('Pesquisando produto')
+        mensagens.config(text='Pesquisando produto', fg='blue')
+        info(f'Pesquisando produto: {self.produto}')
         elemento = self.navegador.find_element(By.XPATH, xpaths_e_links[self.site_atual]['input_search'])
         elemento.send_keys(self.produto, Keys.ENTER)
         self.pegar_valores_dos_resultados_da_pesquisa()
@@ -179,9 +184,11 @@ class Navegador:
                 'link': self.lista_links_produtos
             })
 
-            self.tabela_produtos.to_excel('tabela_produtos.xlsx', index=False)
+            self.tabela_produtos.to_excel(f'{self.nome_tabela}.xlsx', index=False)
             info('Tabela de produtos salva com sucesso')
+            mensagens.config(text="Tabela de produtos salva com sucesso!!!", fg="green")
         except Exception as err:
+            mensagens.config(text='Erro ao salvar a tabela como arquivo excel', fg='red')
             error(f'Erro ao salvar a tabela como arquivo excel: {str(err)}')
         finally:
             self.quit()
