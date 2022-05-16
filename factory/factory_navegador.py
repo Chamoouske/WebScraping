@@ -40,10 +40,14 @@ class Navegador:
         self.navegador.quit()
 
 
+    def sleep(self, tempo = 2):
+        time.sleep(tempo)
+
+
     def pesquisar_produto(self, produto = False):
-        if produto:
+        if produto != False:
             self.salvar_produto_pesquisado(produto)
-            self.proximo_site()
+            self.proximo_site(True)
                 
         info('Pesquisando produto')
         elemento = self.navegador.find_element(By.XPATH, xpaths_e_links[self.site_atual]['input_search'])
@@ -55,15 +59,17 @@ class Navegador:
         self.produto = produto
 
 
-    def proximo_site(self):
+    def proximo_site(self, pesquisar_produto_chamou = False):
         if len(self.sites_usados) > 0:
             proximo_site = self.sites_usados.pop(0)
             self.site_atual = proximo_site
+
+            info(f'Vai para o site: {proximo_site}')
             self.get(xpaths_e_links[self.site_atual]['site'])
 
-            info('Vai para o próximo site: {}'.format(proximo_site))
             self.verificar_popups_cookies()
-            self.pesquisar_produto()
+            if not pesquisar_produto_chamou:
+                self.pesquisar_produto()
         else:
             info('Não há mais sites para pesquisar')
             self.salvar_tabela_produtos()
@@ -73,7 +79,7 @@ class Navegador:
         try:
             info('Verificando popups e cookies')
             elemento = self.navegador.find_element(By.XPATH, xpaths_e_links[self.site_atual]['verificar_popups'])
-            if elemento:
+            if elemento.is_displayed():
                 elemento.click()
             self.fechar_popups_cookies()
         except:
@@ -84,18 +90,18 @@ class Navegador:
         try:
             info('Fechando popups e cookies')
             elemento = self.navegador.find_element(By.XPATH, xpaths_e_links[self.site_atual]['fechar_popups'])
-            if elemento:
+            if elemento.is_displayed():
                 elemento.click()
         except:
-            info('Não há popups ou cookies')
+            info('Não há popups ou cookies de fechamento')
 
 
     def pegar_valores_dos_resultados_da_pesquisa(self):
+        valores_produtos = []
+        nomes_resultados = []
+        links_resultados = []
         try:
-            time.sleep(3)
-            valores_produtos = []
-            nomes_resultados = []
-            links_resultados = []
+            self.sleep(2)
             if self.conta_as_listas_do_resultado_da_pesquisa() > 1:
                 valores_produtos = self.navegador.find_elements(By.XPATH,
                                                                 xpaths_e_links[self.site_atual]
@@ -117,11 +123,14 @@ class Navegador:
                                                                 xpaths_e_links[self.site_atual]
                                                                 ['links_resultados_layout_1'])
 
-            info('Pegando valores dos resultados da pesquisa')
-        except:
-            error('Erro ao pegar os valores na página')
-    
-        self.salvar_resultados_da_pesquisa_da_pagina_atual(valores_produtos, nomes_resultados, links_resultados)
+        except Exception as err:
+            error(f'Erro ao coletar os dados: {str(err)}')
+            valores_produtos = []
+            nomes_resultados = []
+            links_resultados = []
+        finally:
+            info('Os valores dos resultados da pesquisa foram coletados')
+            self.salvar_resultados_da_pesquisa_da_pagina_atual(valores_produtos, nomes_resultados, links_resultados)
 
 
     def conta_as_listas_do_resultado_da_pesquisa(self):
@@ -129,26 +138,32 @@ class Navegador:
 
 
     def salvar_resultados_da_pesquisa_da_pagina_atual(self,valores_produtos, nomes_resultados,links_resultados):
+        self.sleep(2)
         try:
-            info('Salvando resultados da pesquisa da página atual em listas')
             for i in range(0, len(valores_produtos)):
                 self.lista_sites_produtos.append(self.site_atual)
                 self.lista_nomes_produtos.append(nomes_resultados[i].text)
-                self.lista_valores_produtos.append(valores_produtos[i].text)
+                self.lista_valores_produtos.append(valores_produtos[i].text.replace('R$ ', '').replace('.', '').replace(',', '.'))
                 self.lista_links_produtos.append(links_resultados[i].get_attribute('href'))
 
-        except:
-            error('Erro ao salvar os resultados da pesquisa')
-        self.ir_para_a_pagina_seguinte()
+            info('Os resultados da pesquisa da página atual foram salvas em listas')
+        except Exception as err:
+            error(f'Erro ao salvar os resultados em listas: {str(err)}')
+        finally:
+            self.ir_para_a_pagina_seguinte()
 
 
     def ir_para_a_pagina_seguinte(self):
+        self.sleep(2)
         try:
             elemento = self.navegador.find_element(By.XPATH, f'{xpaths_e_links[self.site_atual]["proxima_pagina"]}')
-            if elemento:
+            if elemento.is_displayed():
                 elemento.click()
                 info('Indo para a próxima página')
                 self.pegar_valores_dos_resultados_da_pesquisa()
+            else:
+                self.proximo_site()
+
         except:
             info('Não há mais páginas')
             self.proximo_site()
@@ -165,7 +180,8 @@ class Navegador:
             })
 
             self.tabela_produtos.to_excel('tabela_produtos.xlsx', index=False)
-
             info('Tabela de produtos salva com sucesso')
-        except:
-            error('Erro ao salvar a tabela de produtos')
+        except Exception as err:
+            error(f'Erro ao salvar a tabela como arquivo excel: {str(err)}')
+        finally:
+            self.quit()
