@@ -59,10 +59,7 @@ class Navegador:
         if len(self.sites_usados) > 0:
             proximo_site = self.sites_usados.pop(0)
             self.site_atual = proximo_site
-            if proximo_site == 'mercado_livre':
-                self.get(xpaths_e_links[self.site_atual]['site'])
-            elif proximo_site == 'magazine_luiza':
-                self.get(xpaths_e_links[self.site_atual]['site'])
+            self.get(xpaths_e_links[self.site_atual]['site'])
 
             info('Vai para o próximo site: {}'.format(proximo_site))
             self.verificar_popups_cookies()
@@ -96,6 +93,9 @@ class Navegador:
     def pegar_valores_dos_resultados_da_pesquisa(self):
         try:
             time.sleep(3)
+            valores_produtos = []
+            nomes_resultados = []
+            links_resultados = []
             if self.conta_as_ols_do_resultado_da_pesquisa() > 1:
                 valores_produtos = self.navegador.find_elements(By.XPATH,
                                                                 xpaths_e_links[self.site_atual]
@@ -156,6 +156,7 @@ class Navegador:
 
     def salvar_tabela_produtos(self):
         try:
+            self.tabela_produtos = None
             self.tabela_produtos = pd.DataFrame({
                 'site': self.lista_sites_produtos,
                 'produto': self.lista_nomes_produtos,
