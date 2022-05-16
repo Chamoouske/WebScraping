@@ -96,7 +96,7 @@ class Navegador:
             valores_produtos = []
             nomes_resultados = []
             links_resultados = []
-            if self.conta_as_ols_do_resultado_da_pesquisa() > 1:
+            if self.conta_as_listas_do_resultado_da_pesquisa() > 1:
                 valores_produtos = self.navegador.find_elements(By.XPATH,
                                                                 xpaths_e_links[self.site_atual]
                                                                 ['valores_resultados_layout_2'])
