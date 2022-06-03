@@ -186,9 +186,13 @@ class Navegador:
 
             self.tabela_produtos.to_excel(f'{self.nome_tabela}.xlsx', index=False)
             info('Tabela de produtos salva com sucesso')
+            self.reset_lists()
             mensagens.config(text="Tabela de produtos salva com sucesso!!!", fg="green")
         except Exception as err:
             mensagens.config(text='Erro ao salvar a tabela como arquivo excel', fg='red')
             error(f'Erro ao salvar a tabela como arquivo excel: {str(err)}')
         finally:
             self.quit()
+
+    def reset_lists(self):
+        self.sites_usados = lista_sites
