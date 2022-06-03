@@ -1,18 +1,19 @@
-from factory.factory_chrome import Chrome
-from factory.factory_firefox import Firefox
+from factory.factory import Factory
 from log.main import *
 
 
-from tkinter import *
+import time
+
+
 from utils.window import *
 
 
 def main():
     create_logger('main.log')
-    global mensagens
-    global navegador
 
 def pesquisar_produto(produto = '', browser = 'chrome', nome_tabela = 'tabela_produtos'):
+    mensagens.config(text='Pesquisando! Aguarde até essa mensagem ser alterada!', fg='blue')
+    time.sleep(2)
     if produto != '':
         navegador = definir_navegador(browser, nome_tabela)
         navegador.pesquisar_produto(produto)
@@ -21,25 +22,24 @@ def pesquisar_produto(produto = '', browser = 'chrome', nome_tabela = 'tabela_pr
         
 
 def definir_navegador(browser = 'chrome', nome_tabela = 'tabela_produtos'):
-    if browser == 'firefox':
-        navegador = Firefox()
-    else:
-        navegador = Chrome()
+    global navegador
+    if navegador == None:
+        navegador = Factory(browser)
     navegador.nome_tabela = nome_tabela
     return navegador
 
-    
 def pegar_nome_tabela():
     return tabela.get() if tabela.get() != '' else 'tabela_produtos'
 
 def set_command_botoes():
+    botao_edge.config(width=25, command=lambda: pesquisar_produto(produto.get(), 'edge', pegar_nome_tabela()))
     botao_chrome.config(width=25, command=lambda: pesquisar_produto(produto.get(), 'chrome', pegar_nome_tabela()))
     botao_firefox.config(width=25, command=lambda: pesquisar_produto(produto.get(), 'firefox', pegar_nome_tabela()))
-
 
 if __name__ == '__main__':
     main()
     set_command_botoes()
+    navegador = None
     mensagens.config(text='Informe um produto para iniciar o sistema\nDepois clique no botão do navegador usado', fg='blue')
     janela.mainloop()
 

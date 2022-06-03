@@ -22,5 +22,8 @@ botao_chrome.grid(row=3, column=0, padx=10, pady=10)
 botao_firefox = Button(janela, text='Pesquisar usando o Firefox')
 botao_firefox.grid(row=3, column=2, padx=10, pady=10)
 
+botao_edge = Button(janela, text='Pesquisar usando o Edge')
+botao_edge.grid(row=3, column=1, padx=10, pady=10)
+
 mensagens = Label(janela, text='')
 mensagens.grid(row=4, column=1, padx=10, pady=10)
