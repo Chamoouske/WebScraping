@@ -23,8 +23,7 @@ def pesquisar_produto(produto = '', browser = 'chrome', nome_tabela = 'tabela_pr
 
 def definir_navegador(browser = 'chrome', nome_tabela = 'tabela_produtos'):
     global navegador
-    if navegador == None:
-        navegador = Factory(browser)
+    navegador = Factory(browser)
     navegador.nome_tabela = nome_tabela
     return navegador
 
@@ -32,7 +31,6 @@ def pegar_nome_tabela():
     return tabela.get() if tabela.get() != '' else 'tabela_produtos'
 
 def set_command_botoes():
-    botao_edge.config(width=25, command=lambda: pesquisar_produto(produto.get(), 'edge', pegar_nome_tabela()))
     botao_chrome.config(width=25, command=lambda: pesquisar_produto(produto.get(), 'chrome', pegar_nome_tabela()))
     botao_firefox.config(width=25, command=lambda: pesquisar_produto(produto.get(), 'firefox', pegar_nome_tabela()))
 
